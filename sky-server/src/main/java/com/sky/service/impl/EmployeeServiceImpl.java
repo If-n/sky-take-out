@@ -25,33 +25,34 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeeLoginDTO
      * @return
      */
+    @Override
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
+        //1.查询数据库对应的账号信息
+        //1.1解析dto信息
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
-
-        //1、根据用户名查询数据库中的数据
+        //1.2查找账号
         Employee employee = employeeMapper.getByUsername(username);
-
-        //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
-        if (employee == null) {
-            //账号不存在
+        //1.3没有此账号，抛异常
+        if(employee ==null){
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-
-        //密码比对
-        // TODO 后期需要进行md5加密，然后再进行比对
-        if (!password.equals(employee.getPassword())) {
-            //密码错误
+        //1.4有账号则下一步
+        //2.对比密码
+        //2.1处理密码md5
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
+        //2.2密码错误，抛出异常
+        if(!password.equals(employee.getPassword())){
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
-
-        if (employee.getStatus() == StatusConstant.DISABLE) {
-            //账号被锁定
+        //2.3密码正确
+        //3判断账号状态
+        //3.1账号被锁定，抛异常
+        if(employee.getStatus()==StatusConstant.DISABLE){
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
-
-        //3、返回实体对象
+        //3.2账号正常
+        //4.放行
         return employee;
     }
-
 }
