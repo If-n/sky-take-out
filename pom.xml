@@ -122,6 +122,12 @@
                 <artifactId>wechatpay-apache-httpclient</artifactId>
                 <version>0.4.8</version>
             </dependency>
+            <!--hutool-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>5.8.18</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
