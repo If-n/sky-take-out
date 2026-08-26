@@ -13,6 +13,7 @@ import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
+import com.sky.exception.BaseException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
@@ -125,5 +126,60 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> result = employeePage.getResult();
         //5.封装并返回
         return Result.success(new PageResult(total,result));
+    }
+
+    /**
+     * 启用/禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+    @Override
+    public Result startOrStop(Integer status, Long id) {
+        //1.将要改动的账号id和改动信息封装进employee对象中（统一修改请求方法）
+        LocalDateTime now = LocalDateTime.now();
+        Long adminId = BaseContext.getCurrentId();
+        Employee employee = Employee.builder()//使用构造器方法
+                .id(id)
+                .status(status)
+                .updateTime(now)
+                .updateUser(adminId)
+                .build();
+        //2.传入对象，有值的属性表示需要修改为这个值
+        employeeMapper.update(employee);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询员工信息
+     * @param id
+     * @return
+     */
+    @Override
+    public Result<EmployeeDTO> queryById(Long id) {
+        //1.根据id查询对应employee数据
+        Employee employee = employeeMapper.queryById(id);
+        //2.封装为dto
+        EmployeeDTO employeeDTO = BeanUtil.copyProperties(employee, EmployeeDTO.class);
+        //3.返回dto
+        return Result.success(employeeDTO);
+    }
+
+    /**
+     * 修改员工账号信息
+     */
+    @Override
+    public Result updateEmployee(EmployeeDTO employeeDTO) {
+        //1.将修改后的dto封装到employee中
+        Employee employee = BeanUtil.copyProperties(employeeDTO, Employee.class);
+        //1.1加入操作人和操作时间
+        Long currentId = BaseContext.getCurrentId();
+        LocalDateTime now = LocalDateTime.now();
+        employee.setUpdateUser(currentId);
+        employee.setUpdateTime(now);
+        //2.根据id修改有改动的字段信息
+        employeeMapper.update(employee);
+        //3.修改成功则返回成功信息
+        return Result.success();
     }
 }
