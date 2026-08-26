@@ -87,6 +87,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/page")
+    @ApiOperation("员工分页查询，员工姓名模糊查询")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
         return employeeService.pageQuery(employeePageQueryDTO);
     }
