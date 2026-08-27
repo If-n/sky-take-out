@@ -89,6 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         //2.添加未封装的默认数据
         //2.1设置账号默认状态可用
         employee.setStatus(StatusConstant.ENABLE);
+        /*已使用aop进行自动填充优化
         //2.2设置账号创建时间
         LocalDateTime now = LocalDateTime.now();
         employee.setCreateTime(now);
@@ -96,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateTime(now);
         //2.4设置新增员工/更新员工的操作员
         employee.setCreateUser(adminId);
-        employee.setUpdateUser(adminId);
+        employee.setUpdateUser(adminId);*/
         //2.5设置默认密码
         employee.setPassword(PasswordConstant.DEFAULT_PASSWORD);
         //3.插入employee表中，保存到数据库
@@ -137,13 +138,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Result startOrStop(Integer status, Long id) {
         //1.将要改动的账号id和改动信息封装进employee对象中（统一修改请求方法）
-        LocalDateTime now = LocalDateTime.now();
-        Long adminId = BaseContext.getCurrentId();
+        //LocalDateTime now = LocalDateTime.now();
+        //Long adminId = BaseContext.getCurrentId();
         Employee employee = Employee.builder()//使用构造器方法
                 .id(id)
                 .status(status)
-                .updateTime(now)
-                .updateUser(adminId)
+                //.updateTime(now)已使用aop进行自动填充优化
+                //.updateUser(adminId)已使用aop进行自动填充优化
                 .build();
         //2.传入对象，有值的属性表示需要修改为这个值
         employeeMapper.update(employee);
@@ -172,11 +173,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Result updateEmployee(EmployeeDTO employeeDTO) {
         //1.将修改后的dto封装到employee中
         Employee employee = BeanUtil.copyProperties(employeeDTO, Employee.class);
+        /*已使用aop进行自动填充优化
         //1.1加入操作人和操作时间
         Long currentId = BaseContext.getCurrentId();
         LocalDateTime now = LocalDateTime.now();
         employee.setUpdateUser(currentId);
-        employee.setUpdateTime(now);
+        employee.setUpdateTime(now);*/
         //2.根据id修改有改动的字段信息
         employeeMapper.update(employee);
         //3.修改成功则返回成功信息
