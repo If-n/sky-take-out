@@ -1,12 +1,17 @@
 package com.sky.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.dto.DishDTO;
+import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.result.PageResult;
 import com.sky.service.DishService;
+import com.sky.vo.DishVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,5 +54,24 @@ public class DishServiceImpl implements DishService {
         }
 
 
+    }
+
+    /**
+     * 菜品分页查询
+     * @param dishPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
+        //1.获取dto数据
+        int page = dishPageQueryDTO.getPage();
+        int pageSize = dishPageQueryDTO.getPageSize();
+        //2.分页查询dish数据
+        //2.1使用插件进行分页查询sql拼接
+        PageHelper.startPage(page,pageSize);
+        //2.2分页查询
+        Page<DishVO> dishPage= dishMapper.queryPage(dishPageQueryDTO);
+        //3.封装并返回数据
+        return new PageResult(dishPage.getTotal(),dishPage.getResult());
     }
 }
