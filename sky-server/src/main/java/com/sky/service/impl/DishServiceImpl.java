@@ -7,21 +7,24 @@ import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Category;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+@Slf4j
 @Service
 public class DishServiceImpl implements DishService {
 
@@ -33,6 +36,8 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     /**
      * 新增菜品&口味
@@ -115,6 +120,28 @@ public class DishServiceImpl implements DishService {
         dishFlavorMapper.deleteByDishIds(ids);
 
 
+    }
+
+    /**
+     * 根据id查询菜品数据（包括口味）
+     * @param id
+     * @return
+     */
+    @Override
+    public DishVO getByIdWithFlavors(Long id) {
+        //1.根据id查询菜品数据
+        Dish dish = dishMapper.getById(id);
+        //1.1根据categoryId查询categoryName
+        Category category= categoryMapper.getById(dish.getCategoryId());
+        String categoryName = category.getName();
+        //2.根据dishId查询口味数据
+        List<DishFlavor> flavors= dishFlavorMapper.getByDishId(id);
+        //3.封装为DishVO并返回
+        DishVO dishVO = BeanUtil.copyProperties(dish, DishVO.class);
+        dishVO.setFlavors(flavors);
+        dishVO.setCategoryName(categoryName);
+        log.info("菜品查询结果：{}",dishVO);
+        return dishVO;
     }
 
 }
