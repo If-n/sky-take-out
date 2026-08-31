@@ -10,7 +10,9 @@ public class RedisConstant {
 
     public static final String SHOP_STATUS_KEY = SKY_PREFIX+"shop:status:";
 
-    public static final String CATEGORY_DISH_KEY=SKY_PREFIX+"category:";
+    public static final String CATEGORY_DISH_KEY=SKY_PREFIX+"Cache:Category:";
 
     public static final String DISH_KEY=SKY_PREFIX+"dish:";
+
+    public static final String CACHE_SETMEAL=SKY_PREFIX+"Cache:Setmeal:";
 }
