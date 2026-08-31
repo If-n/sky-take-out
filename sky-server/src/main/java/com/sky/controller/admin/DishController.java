@@ -36,6 +36,7 @@ public class DishController {
     @ApiOperation("新增菜品")
     public Result save(@RequestBody DishDTO dishDTO){
         dishService.saveWithFlavor(dishDTO);
+
         return Result.success();
     }
 
@@ -88,6 +89,19 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO){
         log.info("修改菜品信息：{}",dishDTO);
         dishService.updateWithFlavors(dishDTO);
+        return Result.success();
+    }
+
+    /**
+     * 菜品起售停售
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("菜品起售停售")
+    public Result<String> startOrStop(@PathVariable Integer status, Long id){
+        dishService.startOrStop(status,id);
         return Result.success();
     }
 }
