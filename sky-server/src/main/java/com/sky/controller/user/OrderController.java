@@ -43,11 +43,11 @@ public class OrderController {
     @PutMapping("/payment")
     @ApiOperation("订单支付")
     public Result<OrderPaymentVO> payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) throws Exception {
-        return Result.success(new OrderPaymentVO("1","1","1","1","1"));//测试用
-        /*log.info("订单支付：{}", ordersPaymentDTO);
+        //return Result.success(new OrderPaymentVO("1","1","1","1","1"));//测试用
+        log.info("订单支付：{}", ordersPaymentDTO);
         OrderPaymentVO orderPaymentVO = orderService.payment(ordersPaymentDTO);
-        log.info("生成预支付交易单：{}", orderPaymentVO);
-        return Result.success(orderPaymentVO);*/
+        //log.info("生成预支付交易单：{}", orderPaymentVO);
+        return Result.success(orderPaymentVO);
     }
 
 

@@ -21,12 +21,12 @@ public class OrderTask {
     /**
      * 处理超时未支付的订单,每分钟执行一次
      */
-    @Scheduled(cron = "1/5 * * * * *")
-    //@Scheduled(cron = "0 * * * * *")
+    //@Scheduled(cron = "1/5 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     private void processTimeoutOrder(){
         //1.获取当前时间
         LocalDateTime now = LocalDateTime.now();
-        log.info("处理超时未支付的订单：{}",now);
+        //log.info("处理超时未支付的订单：{}",now);
         //2.计算超时时间
         LocalDateTime outTime = now.plusMinutes(-15);
         //3.查询<超时时间&&未支付状态的order
@@ -47,12 +47,12 @@ public class OrderTask {
     /**
      * 每天清理派送中订单
      */
-    @Scheduled(cron = "1/5 * * * * *")
-    //@Scheduled(cron = "0 0 1 * * *")
+    //@Scheduled(cron = "1/5 * * * * *")
+    @Scheduled(cron = "0 0 1 * * *")
     private void cleanDeliveryOrder(){
         //1.获取当前时间
         LocalDateTime now = LocalDateTime.now();
-        log.info("清理派送中订单：{}",now);
+        //log.info("清理派送中订单：{}",now);
         //2.计算需要清理的订单时间
         LocalDateTime outTime = now.plusHours(-1);
         //3.条件查询订单
