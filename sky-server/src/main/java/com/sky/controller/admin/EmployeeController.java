@@ -86,12 +86,23 @@ public class EmployeeController {
         return employeeService.save(employeeDTO);
     }
 
+    /**
+     * 员工分页查询，员工姓名模糊查询
+     * @param employeePageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     @ApiOperation("员工分页查询，员工姓名模糊查询")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
         return employeeService.pageQuery(employeePageQueryDTO);
     }
 
+    /**
+     * 更改员工账号状态，启用/禁用
+     * @param status
+     * @param id
+     * @return
+     */
     @PostMapping("/status/{status}")
     @ApiOperation("更改员工账号状态，启用/禁用")
     public Result startOrStop(@PathVariable("status") Integer status,@RequestParam("id") Long id){
@@ -99,6 +110,11 @@ public class EmployeeController {
         return employeeService.startOrStop(status,id);
     }
 
+    /**
+     * 员工账号信息查询
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     @ApiOperation("员工账号信息查询")
     public Result<EmployeeDTO> queryById(@PathVariable("id") Long id){
@@ -106,6 +122,11 @@ public class EmployeeController {
         return employeeService.queryById(id);
     }
 
+    /**
+     * 修改员工账号信息
+     * @param employeeDTO
+     * @return
+     */
     @PutMapping
     @ApiOperation("修改员工账号信息")
     public Result updateEmployee(@RequestBody EmployeeDTO employeeDTO){
