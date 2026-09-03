@@ -1,5 +1,6 @@
 package com.sky.mapper;
 
+import com.sky.dto.PeriodUsersDTO;
 import com.sky.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -29,4 +30,11 @@ public interface UserMapper {
      */
     @Select("select * from user where id=#{userId}")
     User getById(Long userId);
+
+    /**
+     * 根据时间段条件查询对应用户数
+     * @param paramMap
+     * @return
+     */
+    Integer sumByMap(PeriodUsersDTO paramMap);
 }
