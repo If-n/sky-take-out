@@ -10,6 +10,7 @@ import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
@@ -98,8 +99,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         //2.4设置新增员工/更新员工的操作员
         employee.setCreateUser(adminId);
         employee.setUpdateUser(adminId);*/
-        //2.5设置默认密码
-        employee.setPassword(PasswordConstant.DEFAULT_PASSWORD);
+        //2.5设置默认密码（md5加密）
+        String password=PasswordConstant.DEFAULT_PASSWORD;
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
+        employee.setPassword(password);
         //3.插入employee表中，保存到数据库
         employeeMapper.insert(employee);
         //4.返回成功信息
@@ -183,5 +186,44 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.update(employee);
         //3.修改成功则返回成功信息
         return Result.success();
+    }
+
+    /**
+     * 管理端账号修改密码
+     * @param passwordEditDTO
+     */
+    @Override
+    public void resetPassword(PasswordEditDTO passwordEditDTO) {
+        //1.取出当前登录用户id
+        Long userId = BaseContext.getCurrentId();
+        //2.解析数据，取出输入的旧密码
+        String oldPassword = passwordEditDTO.getOldPassword();
+        //非空判断
+        if(oldPassword==null){
+            throw new PasswordErrorException(MessageConstant.OLD_PASSWORD_ERROR);
+        }
+        //3.转为加密密码
+        oldPassword=DigestUtils.md5DigestAsHex(oldPassword.getBytes());
+        //4.查询数据库中用户的密码
+        Employee employee = employeeMapper.queryById(userId);
+        String password = employee.getPassword();
+        //5.对比密码
+        if(!oldPassword.equals(password)){
+            //输入不正确
+            throw new PasswordErrorException(MessageConstant.OLD_PASSWORD_ERROR);
+        }
+        //6.旧密码校验通过,将新密码加密存入数据库
+        //6.1取出新密码并加密
+        String newPassword = passwordEditDTO.getNewPassword();
+        //非空判断
+        if(newPassword==null){
+            throw new PasswordErrorException(MessageConstant.PASSWORD_EDIT_FAILED);
+        }
+        newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
+        //6.2存入db
+        Employee employee1 = new Employee();
+        employee1.setPassword(newPassword);
+        employee1.setId(userId);
+        employeeMapper.update(employee1);
     }
 }
